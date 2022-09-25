@@ -25,15 +25,14 @@ class DBManager(context: Context) {
         val newRowID = db?.insert(TABLE_NAME, null, value)
     }
 
-    fun read(): List<Pair<String, String>> {
-        val res = arrayListOf<Pair<String, String>>()
+    fun read(): List<String> {
+        val res = arrayListOf<String>()
         val cursor = db?.query(TABLE_NAME, null, null, null,
             null, null, null)!!
         with(cursor) {
             while (moveToNext()) {
                 val item1 = getString(getColumnIndexOrThrow(COLUMN_NAME_TITLE))
-                val item2 = getString(getColumnIndexOrThrow(COLUMN_NAME_CONTENT))
-                res.add(Pair(item1, item2))
+                res.add(item1)
             }
         }
         cursor.close()
