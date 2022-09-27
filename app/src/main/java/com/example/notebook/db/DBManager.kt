@@ -3,10 +3,12 @@ package com.example.notebook.db
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.provider.BaseColumns
 import com.example.notebook.db.FeedEntry.COLUMN_NAME_CONTENT
 import com.example.notebook.db.FeedEntry.COLUMN_NAME_IMAGE_URI
 import com.example.notebook.db.FeedEntry.COLUMN_NAME_TITLE
 import com.example.notebook.db.FeedEntry.TABLE_NAME
+import com.example.notebook.item.ListItem
 
 class DBManager(context: Context) {
     private val myHelper = DBHelper(context)
@@ -25,14 +27,23 @@ class DBManager(context: Context) {
         val newRowID = db?.insert(TABLE_NAME, null, value)
     }
 
-    fun read(): List<String> {
-        val res = arrayListOf<String>()
+    fun remove(id: String) {
+        val selection = "${BaseColumns._ID} LIKE ?"
+        val selectionArgs = arrayOf("$id")
+        db?.delete(TABLE_NAME, selection, selectionArgs)
+    }
+
+    fun read(): List<ListItem> {
+        val res = arrayListOf<ListItem>()
         val cursor = db?.query(TABLE_NAME, null, null, null,
             null, null, null)!!
         with(cursor) {
             while (moveToNext()) {
                 val item1 = getString(getColumnIndexOrThrow(COLUMN_NAME_TITLE))
-                res.add(item1)
+                val item2 = getString(getColumnIndexOrThrow(COLUMN_NAME_CONTENT))
+                val item3 = getString(getColumnIndexOrThrow(COLUMN_NAME_IMAGE_URI))
+                val item4 = getInt(getColumnIndexOrThrow(BaseColumns._ID))
+                res.add(ListItem(item1, item2, item3, item4))
             }
         }
         cursor.close()

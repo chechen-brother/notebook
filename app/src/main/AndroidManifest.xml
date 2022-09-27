@@ -14,13 +14,13 @@
         android:theme="@style/Theme.Notebook"
         tools:targetApi="31">
         <activity
-            android:name=".RcActivity"
+            android:name=".activity.RcActivity"
             android:exported="false" />
         <activity
-            android:name=".EditActivity"
+            android:name=".activity.EditActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
