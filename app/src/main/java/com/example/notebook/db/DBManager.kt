@@ -33,9 +33,10 @@ class DBManager(context: Context) {
         db?.delete(TABLE_NAME, selection, selectionArgs)
     }
 
-    fun read(): List<ListItem> {
+    fun read(arg: String): List<ListItem> {
         val res = arrayListOf<ListItem>()
-        val cursor = db?.query(TABLE_NAME, null, null, null,
+        val selection = "$COLUMN_NAME_TITLE LIKE ?"
+        val cursor = db?.query(TABLE_NAME, null, selection, arrayOf("%$arg%"),
             null, null, null)!!
         with(cursor) {
             while (moveToNext()) {

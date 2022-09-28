@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         init()
+        initSearchView()
     }
 
     override fun onResume() {
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fillAdapter() {
-        val dataFromDB = myManager.read()
+        val dataFromDB = myManager.read("")
         myAdapter.updateAdapter(dataFromDB)
         if (dataFromDB.isNotEmpty()) {
             binding.textEmpty.visibility = View.GONE
@@ -70,5 +72,20 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
+    fun initSearchView() {
+        binding.search.setOnQueryTextListener(object: SearchView.OnQueryTextListener  {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                val myList = myManager.read(p0!!)
+                myAdapter.updateAdapter(myList)
+                return true
+            }
+
+        })
+    }
 
 }
