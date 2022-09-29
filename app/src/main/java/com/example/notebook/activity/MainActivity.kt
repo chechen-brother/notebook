@@ -11,11 +11,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.notebook.adpter.MyAdapter
 import com.example.notebook.databinding.ActivityMainBinding
 import com.example.notebook.db.DBManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val myManager = DBManager(this)
     private val myAdapter = MyAdapter(ArrayList(), this)
+    private var job: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         myManager.open()
-        fillAdapter()
+        fillAdapter("")
     }
 
     override fun onDestroy() {
@@ -47,13 +52,15 @@ class MainActivity : AppCompatActivity() {
         binding.recItems.adapter = myAdapter
     }
 
-    private fun fillAdapter() {
-        val dataFromDB = myManager.read("")
-        myAdapter.updateAdapter(dataFromDB)
-        if (dataFromDB.isNotEmpty()) {
-            binding.textEmpty.visibility = View.GONE
+    private fun fillAdapter(text: String) {
+        job?.cancel()
+        job = CoroutineScope(Dispatchers.Main).launch {
+            val dataFromDB = myManager.read(text)
+            myAdapter.updateAdapter(dataFromDB)
+            if (dataFromDB.isNotEmpty()) {
+                binding.textEmpty.visibility = View.GONE
+            } else binding.textEmpty.visibility = View.VISIBLE
         }
-        else  binding.textEmpty.visibility = View.VISIBLE
     }
 
     private fun getSwipeMg() =
@@ -73,15 +80,14 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-    fun initSearchView() {
+    private fun initSearchView() {
         binding.search.setOnQueryTextListener(object: SearchView.OnQueryTextListener  {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 return true
             }
 
             override fun onQueryTextChange(p0: String?): Boolean {
-                val myList = myManager.read(p0!!)
-                myAdapter.updateAdapter(myList)
+                fillAdapter(p0!!)
                 return true
             }
 

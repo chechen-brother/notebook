@@ -12,6 +12,7 @@ import com.example.notebook.activity.EditActivity
 import com.example.notebook.db.DBManager
 import com.example.notebook.item.ListItem
 import com.example.notebook.item.MyConstants.CONST_CONTENT
+import com.example.notebook.item.MyConstants.CONST_ID
 import com.example.notebook.item.MyConstants.CONST_TITLE
 import com.example.notebook.item.MyConstants.CONST_URI
 
@@ -20,14 +21,17 @@ class MyAdapter(private val listMain: ArrayList<ListItem>, val context: Context)
 
     class MyHolder(itemView: View, val cont: Context) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
+        private val tvTime: TextView = itemView.findViewById(R.id.time)
 
         fun setData(item: ListItem) {
             tvTitle.text = item.title
+            tvTime.text = item.time
             itemView.setOnClickListener {
                 val intent = Intent(cont, EditActivity::class.java).apply {
                     putExtra(CONST_TITLE, item.title)
                     putExtra(CONST_CONTENT, item.content)
                     putExtra(CONST_URI, item.uri)
+                    putExtra(CONST_ID, item.id)
                 }
                 cont.startActivity(intent)
             }
